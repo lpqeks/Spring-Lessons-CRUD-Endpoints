@@ -5,6 +5,8 @@ import com.galvanize.Spring.Lessons.CRUD.Endpoints.Model.Lesson;
 import com.galvanize.Spring.Lessons.CRUD.Endpoints.Repository.LessonRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/lesson")
 public class LessonController {
@@ -26,4 +28,14 @@ public class LessonController {
         return this.repository.save(lesson);
     }
 
+    @GetMapping("{id}")
+    public Optional<Lesson> getTitleByID(@PathVariable long id) {
+        return this.repository.findById(id);
+    }
+
+    @DeleteMapping("{id}")
+    public String  deleteDatabaseRowByID(@PathVariable long id) {
+        this.repository.deleteById(id);
+        return "Record " + id + " has been deleted.";
+    }
 }
