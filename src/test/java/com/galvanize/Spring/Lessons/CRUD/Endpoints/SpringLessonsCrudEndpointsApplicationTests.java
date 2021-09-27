@@ -15,8 +15,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.core.Is.is;
@@ -82,11 +82,45 @@ class SpringLessonsCrudEndpointsApplicationTests {
 
 		//set up
 
+
 		String jason = "{\"title\": \"SQL TEST\",\"deliveredOn\": \"2017-04-06\"}";
 
 		this.mvc.perform(post("/lesson")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(jason))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.title", is("SQL TEST")));
+
+	}
+	@Transactional
+	@Rollback
+	@Test
+	public void testUpdateLesson() throws Exception {
+
+		//set up
+		Lesson lesson = new Lesson();
+		lesson.setTitle("Monday Sucks");
+		SimpleDateFormat formmater = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = formmater.parse("2021-09-27");
+		lesson.setDeliveredOn(date);
+
+		Lesson lesson1 = new Lesson();
+		lesson.setTitle("Tuesday is ok");
+		SimpleDateFormat formmater1 = new SimpleDateFormat("yyyy-MM-dd");
+		Date date1 = formmater1.parse("2021-09-27");
+		lesson.setDeliveredOn(date1);
+
+		Lesson lesson2 = new Lesson();
+		lesson.setTitle("MFriday is the Best");
+		SimpleDateFormat formmater2 = new SimpleDateFormat("yyyy-MM-dd");
+		Date date2 = formmater2.parse("2021-09-27");
+		lesson.setDeliveredOn(date2);
+
+		String jason = "{\"id\": 1, \"title\": \"SQL TEST\",\"deliveredOn\": \"2017-04-06\"}";
+
+		this.mvc.perform(patch("/lesson/1")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(jason))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.title", is("SQL TEST")));
 

@@ -38,4 +38,11 @@ public class LessonController {
         this.repository.deleteById(id);
         return "Record " + id + " has been deleted.";
     }
+
+    @PatchMapping("{id}")
+    public Lesson updateLessonById(@RequestBody Lesson lesson) {
+        return this.repository.save(lesson);
+
+
+    }
 }
