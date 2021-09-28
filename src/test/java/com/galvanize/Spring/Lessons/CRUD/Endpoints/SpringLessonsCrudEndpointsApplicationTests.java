@@ -104,17 +104,22 @@ class SpringLessonsCrudEndpointsApplicationTests {
 		Date date = formmater.parse("2021-09-27");
 		lesson.setDeliveredOn(date);
 
+
 		Lesson lesson1 = new Lesson();
-		lesson.setTitle("Tuesday is ok");
+		lesson1.setTitle("Tuesday is ok");
 		SimpleDateFormat formmater1 = new SimpleDateFormat("yyyy-MM-dd");
 		Date date1 = formmater1.parse("2021-09-27");
-		lesson.setDeliveredOn(date1);
+		lesson1.setDeliveredOn(date1);
 
 		Lesson lesson2 = new Lesson();
-		lesson.setTitle("MFriday is the Best");
+		lesson2.setTitle("MFriday is the Best");
 		SimpleDateFormat formmater2 = new SimpleDateFormat("yyyy-MM-dd");
 		Date date2 = formmater2.parse("2021-09-27");
-		lesson.setDeliveredOn(date2);
+		lesson2.setDeliveredOn(date2);
+
+		this.repository.save(lesson);
+		this.repository.save(lesson1);
+		this.repository.save(lesson2);
 
 		String jason = "{\"id\": 1, \"title\": \"SQL TEST\",\"deliveredOn\": \"2017-04-06\"}";
 
@@ -125,6 +130,79 @@ class SpringLessonsCrudEndpointsApplicationTests {
 				.andExpect(jsonPath("$.title", is("SQL TEST")));
 
 	}
+
+	@Transactional
+	@Rollback
+	@Test
+	public void tesFindByteLesson() throws Exception {
+
+		//set up
+		Lesson lesson = new Lesson();
+		lesson.setTitle("Monday Sucks");
+		SimpleDateFormat formmater = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = formmater.parse("2021-09-27");
+		lesson.setDeliveredOn(date);
+
+		Lesson lesson1 = new Lesson();
+		lesson1.setTitle("Tuesday is ok");
+		SimpleDateFormat formmater1 = new SimpleDateFormat("yyyy-MM-dd");
+		Date date1 = formmater1.parse("2021-09-27");
+		lesson1.setDeliveredOn(date1);
+
+		Lesson lesson2 = new Lesson();
+		lesson2.setTitle("Friday is the Best");
+		SimpleDateFormat formmater2 = new SimpleDateFormat("yyyy-MM-dd");
+		Date date2 = formmater2.parse("2021-09-27");
+		lesson2.setDeliveredOn(date2);
+
+		this.repository.save(lesson);
+		this.repository.save(lesson1);
+		this.repository.save(lesson2);
+
+		//String jason = "{\"id\": 1, \"title\": \"SQL TEST\",\"deliveredOn\": \"2017-04-06\"}";
+
+		this.mvc.perform(get("/lesson/find/Monday Sucks"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$[0].title", is("Monday Sucks")));
+
+	}
+
+	@Transactional
+	@Rollback
+	@Test
+	public void testGetLessonBetweenDates() throws Exception {
+		//set up
+		Lesson lesson = new Lesson();
+		lesson.setTitle("Monday Sucks");
+		SimpleDateFormat formmater = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = formmater.parse("2020-09-27");
+		lesson.setDeliveredOn(date);
+
+		Lesson lesson1 = new Lesson();
+		lesson1.setTitle("Tuesday is ok");
+		SimpleDateFormat formmater1 = new SimpleDateFormat("yyyy-MM-dd");
+		Date date1 = formmater1.parse("2021-09-27");
+		lesson1.setDeliveredOn(date1);
+
+		Lesson lesson2 = new Lesson();
+		lesson2.setTitle("Friday is the Best");
+		SimpleDateFormat formmater2 = new SimpleDateFormat("yyyy-MM-dd");
+		Date date2 = formmater2.parse("2022-09-27");
+		lesson2.setDeliveredOn(date2);
+
+		this.repository.save(lesson);
+		this.repository.save(lesson1);
+		this.repository.save(lesson2);
+
+		//execution
+		this.mvc.perform(get("/lesson/between?date1=2020-01-01&date2=2021-01-01"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$[0].title", is("Monday Sucks")));
+
+
+	}
+
+
 
 }
 
